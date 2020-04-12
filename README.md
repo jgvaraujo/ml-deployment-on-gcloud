@@ -1,4 +1,4 @@
-# ml-deployment-on-gcloud
+# Machine Learning deployment pipeline on Google Cloud Platform
 
 ## Initial description
 In this project I'll create a pipeline to Continuous Integration (CI) and Continuous Development (CD) to deploy a machine learning (ML) model on Google Cloud Platform (GCP).
