@@ -1,0 +1,10 @@
+Dockerfile
+.git*
+.cache*
+**/*.pyc
+**/*.pyo
+**/*.pyd
+__pycache__
+train
+gcp_commands
+request_test
