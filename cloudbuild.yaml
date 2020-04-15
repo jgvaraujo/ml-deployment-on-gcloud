@@ -10,8 +10,10 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
-      - '-t gcr.io/$PROJECT_ID/appcicd:latest'
-      - '--cache-from gcr.io/$PROJECT_ID/appcicd:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
       - '.'
   # push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
