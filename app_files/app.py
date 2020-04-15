@@ -15,7 +15,7 @@ FEATURES_MASK = ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS',\
 
 @app.route('/', methods=['GET'])
 def server_check():
-    return "I'M ALIVE!"
+    return "I'M ALIVE!  <<<  2"
 
 @app.route('/predict', methods=['POST'])
 def predictor():
