@@ -32,4 +32,4 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
 images:
-  - 'gcr.io/$PROJECT/appcicd:latest'
+  - 'gcr.io/$PROJECT_ID/appcicd:latest'
