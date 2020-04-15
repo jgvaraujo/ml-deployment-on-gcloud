@@ -1,11 +1,11 @@
 steps:
   # pull the container image if it's already built
-#  - name: 'gcr.io/cloud-builders/docker'
-#    entrypoint: 'bash'
-#    args:
-#      - '-c'
-#      - |-
-#        docker pull gcr.io/$PROJECT_ID/appcicd:latest || exit 0
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        docker pull gcr.io/$PROJECT_ID/appcicd:latest || exit 0
   # build the container image
   - name: 'gcr.io/cloud-builders/docker'
     args:
