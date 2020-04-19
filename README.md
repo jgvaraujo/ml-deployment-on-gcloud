@@ -82,7 +82,7 @@ Notice that in the `boston_problem.py` I put a command that prints the columns o
 
 Flask is a micro web framework written in Python. This API helped me to create an application that execute my model prediction function in a web address in the *localhost*. It's very simple, you only need to know three commands to expose your functions.
 
-If you don't know anything about Flask, I recommend you to read the Todd Birchard articles [[1]](L1).
+If you don't know anything about Flask, I recommend you to read the Todd Birchard articles [[1]](references).
 
 The `app_files` folder contains two files: `ml-model.pkl`, the object that contains my exact created and trained model; and`app.py`, the application itself.
 
@@ -155,4 +155,4 @@ The conditional statement is because I just want to run my application if `app.p
 
 ## References
 
-<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008.
+[1] Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008.
