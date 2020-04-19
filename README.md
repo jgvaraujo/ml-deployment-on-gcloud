@@ -1,6 +1,11 @@
 # Machine Learning deployment pipeline on Google Cloud Run
 
+<<<<<<< HEAD
 ## TL; TR;
+=======
+## Initial description
+In this project I'll create a pipeline to Continuous Integration (CI) and Continuous Development (CD) to deploy a machine learning (ML) model on Google Cloud Platform (GCP) **Cloud Run**.
+>>>>>>> 5dfe1f15df60f951d15a4d7c1daaf24ddcee4214
 
 I configured a pipeline to deploy Machine Learning models on Google Cloud
  Platform (GCP) that starts with a `git push` in a GitHub repository and ends
@@ -28,6 +33,7 @@ Python (as language) >
 
 ## Project tree
 
+<<<<<<< HEAD
 ```
 ml-deployment-on-gcloud/
 ├── README.md
@@ -103,3 +109,10 @@ This is a very simple example of how to train a model and make it portable
 ## Conclusion
 
 ## References
+=======
+I know that the first deploy will take some minutes, but I want to do some updates and re-deploy my aplication as fast as possible. First, I will understand how to use Docker's building cache to re-build my image fast and, second, I will try to rollout without downtime for my possible new updates.
+
+## Note
+The codes of the project are finished. I need to create the tutorial.
+I'm almost sure that this same tutorial will be published in portuguese(br) in [Porto Seguro's Medium](https://medium.com/porto-seguro/ciencia-de-dados/home).
+>>>>>>> 5dfe1f15df60f951d15a4d7c1daaf24ddcee4214
