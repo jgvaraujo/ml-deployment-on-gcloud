@@ -5,13 +5,13 @@ import pickle
 import logging
 import os
 
-app = Flask(__name__)
-
 with open('ml-model.pkl', 'rb') as f:
     MODEL = pickle.load(f)
 
 FEATURES_MASK = ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS',\
                  'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT']
+
+app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def server_check():
@@ -25,7 +25,7 @@ def predictor():
         features = pd.DataFrame([content])
         features = features[FEATURES_MASK]
     except:
-        logging.exception("An exception was thrown!")
+        logging.exception("The JSON file was broke.")
         return jsonify(status='error', predict=-1)
 
     pred = MODEL.predict(features)[0]
