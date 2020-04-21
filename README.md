@@ -90,7 +90,7 @@ with open('ml-model.pkl', 'rb') as f:
     MODEL = pickle.load(f)
 ```
 
-After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., _myapp.com**/**_ and _myapp.com**/predict**_ has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route. There are two main methods that can be simply described as follows:
+After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., _myapp.com_**/** and _myapp.com_**/predict** has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route. There are two main methods that can be simply described as follows:
 
 - GET: to retrieve an information (message);
 - POST: to receive an information and return a task result (another information/message);
@@ -180,4 +180,5 @@ HERE!
 ## References
 
 <a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited April 20, 2020)_
+
 <a name="L2">[2]</a> Yury Pitsishin ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited April 20, 2020)_
