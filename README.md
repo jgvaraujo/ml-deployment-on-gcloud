@@ -1,12 +1,12 @@
 # Machine Learning deployment pipeline on Google Cloud Run
 
-This project is a tutorial on how to deploy your Machine Learning algorithm on Google Cloud in a Continuous Integration and Deployment (CI/CD) context. For this, I understand that you'll need to have this skills:
+This project is a simple example on how to deploy your Machine Learning algorithm on Google Cloud in a Continuous Integration and Deployment (CI/CD) context. For this, I understand that you'll need to have this skills:
 
-- Python: <font color='darkorange'>`Intermediate`</font>
-- Flask: <font color='green'>`Basic`</font>
-- Terminal: <font color='darkorange'>`Intermediate`</font>
-- Docker: <font color='green'>`Basic`</font>
-- Cloud: <font color='green'>`Basic`</font>
+- Python: <span style='color:darkorange'>`Intermediate`</span>
+- Flask: <span style='color:green'>`Basic`</span>
+- Terminal: <span style='color:darkorange'>`Intermediate`</span>
+- Docker: <span style='color:green'>`Basic`</span>
+- Cloud: <span style='color:green'>`Basic`</span>
 
 ## TL; TR;
 
@@ -45,8 +45,8 @@ ml-deployment-on-gcloud/
 │   ├── app.py
 │   └── ml-model.pkl
 ├── request_test
-│   ├── caller_loop.py
-│   ├── caller_single.py
+│   ├── loop_get.py
+│   ├── loop_post.py
 │   └── example.json
 ├── gcp_commands
 │   ├── gcloud_config.sh
@@ -90,7 +90,7 @@ with open('ml-model.pkl', 'rb') as f:
     MODEL = pickle.load(f)
 ```
 
-After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., *myapp.com**/*** and *myapp.com**/predict*** has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route and function. There are two main methods that can be simply described as follows:
+After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., _myapp.com**/**_ and _myapp.com**/predict**_ has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route. There are two main methods that can be simply described as follows:
 
 - GET: to retrieve an information (message);
 - POST: to receive an information and return a task result (another information/message);
@@ -130,11 +130,34 @@ if __name__=='__main__':
     app.run( debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)) )
 ```
 
-The conditional statement is because I just want to run my application if `app.py` is executed. If this file is imported by another 
+The conditional statement is because I just want to run my application if I am executing `app.py`. 
 
-## Local request
+## Request Tests
+
+In folder `request_test` I have two Python files to each request method that makes infinity loops. I used this programs to test my local and cloud Flask applications. To change between local and cloud application, we just have to change the URL address, e.g., http://localhost:8080/predict > http://myapp.com:8080/predict.
 
 ## Docker & Dockerfile
+
+Docker is an excellent container image manager and did the system isolation work for me. I just made a simple Dockerfile, but I have two tips for you:
+
+- If your application don't need a whole operating system, you can get small base image to you application. Instead of `ubuntu:18.04` you can choose `python:3.6`; instead of `python:3.6` you can choose `python:3.6-slim-buster`; and so on.
+- A container image is built of layers. Every command is a layer. If something change in the command (the content of a file, the command itself, ...) the layer changes. The tip here is to use cache images, i.e., to use a pre-built image and it's layers in the process of building a new image. For this, put the commands and layers more prone to change in the end of the file. The classical layer to put in the first lines is the one to install dependencies.
+
+This is my Dockerfile:
+
+```dockerfile
+# a small operating system
+FROM python:3.6-slim-buster
+# layers to install dependencies (less prone to changes)
+RUN python -m pip install --upgrade pip
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+# layers to copy my files (more prone to changes)
+COPY . /app
+WORKDIR /app/app_files
+# starts my application
+CMD ["python", "app.py"]
+```
 
 ## GitHub Repo
 
@@ -153,6 +176,3 @@ The conditional statement is because I just want to run my application if `app.p
 ## References
 
 <a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008.
-
-### 
-
