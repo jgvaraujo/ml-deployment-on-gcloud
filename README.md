@@ -159,7 +159,11 @@ WORKDIR /app/app_files
 CMD ["python", "app.py"]
 ```
 
+NOTE: I lost sometime to understand the difference between commands RUN, CMD and ENTRYPOINT. If you wanna know this too, I recommend you to read Yury Pitsishin's article [[2]](#L2).
+
 ## GitHub Repo
+
+HERE!
 
 ## Google Cloud Build - The trigger
 
@@ -175,4 +179,5 @@ CMD ["python", "app.py"]
 
 ## References
 
-<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008.
+<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited April 20, 2020)_
+<a name="L2">[2]</a> Yury Pitsishin ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited April 20, 2020)_
