@@ -161,11 +161,38 @@ CMD ["python", "app.py"]
 
 NOTE: I lost sometime to understand the difference between commands RUN, CMD and ENTRYPOINT. If you wanna know this too, I recommend you to read Yury Pitsishin's article [[2]](#L2).
 
-## GitHub Repo
+## Git Repo
 
-HERE!
+Until here, I had a complete containerized application working in my local host. To expose my model as a service on the cloud, I had to make it accessible. So, for this deployment example I choose to store my files on GitHub, one of the possible repositories that Google Cloud Build accepts to do a Continuous Integration. 
 
 ## Google Cloud Build - The trigger
+
+Google Cloud Build is a repository listener that can do almost everything you want after a `git push` command execution. It understands that some commit was made and trigger the execution of a script contained in a YAML file that belongs to the same repository. I'll talk about this file in the next section. For now, I'll show you how to configure this trigger.
+
+### Step 1: Choose your repo
+
+
+Google Cloud has its own repository, the Google Cloud Source Repositories. However, in this project I choose GitHub, because I'm using a trial account. If you use the Google Cloud repo, go to step X.
+
+<img src="screenshots/gcloud-build-step1.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
+### Step 2: Install Google Cloud Build app in you GitHub account
+
+<img src="screenshots/gcloud-build-step2.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
+<img src="screenshots/gcloud-build-step3.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
+### Step 3: Select the repositories you want to listen
+
+<img src="screenshots/gcloud-build-step4.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
+### Step 4: Create the Push Trigger
+
+![Possible repositories in Google Cloud Build](screenshots/gcloud-build-step5.png)
+
+### Step 5: ###################
+
+<img src="screenshots/gcloud-build-step6.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
 
 ## YAML Ain't a Markup Language - `cloudbuild.yaml`
 
@@ -179,6 +206,6 @@ HERE!
 
 ## References
 
-<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited April 20, 2020)_
+<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited in April 20, 2020)_
 
-<a name="L2">[2]</a> Yury Pitsishin ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited April 20, 2020)_
+<a name="L2">[2]</a> Yury Pitsishin ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited in April 20, 2020)_
