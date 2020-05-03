@@ -190,15 +190,108 @@ Google Cloud has its own repository, the Google Cloud Source Repositories. Howev
 
 ![Possible repositories in Google Cloud Build](screenshots/gcloud-build-step5.png)
 
-### Step 5: ###################
+### Step 5: Edit the trigger to change the name, choose trigger branches and select the build configuration file (`cloudbuild.yaml`) ###################
 
 <img src="screenshots/gcloud-build-step6.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
 
+<img src="screenshots/gcloud-build-step7a.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
+<img src="screenshots/gcloud-build-step7b.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+
 ## YAML Ain't a Markup Language - `cloudbuild.yaml`
 
-## Google Container Registry
+Google Cloud Build gives you two options:
+
+- Build a Docker image with a Dockerfile;
+- Use a [YAML](https://en.wikipedia.org/wiki/YAML) file to run commands from Google Container Registry images that builds your application;
+
+The second option is more general. With this option I have lots of Cloud Builders [[4]]("#L4") to my disposal and I can run specific commands for my CI/CD purpose. This Cloud Builders are pre-built images ([source codes](https://github.com/GoogleCloudPlatform/cloud-builders)) to execute commands.   However, for this project I just needed two of then:
+
+- `docker`to invoke Docker commands;
+- `gcloud` to invoke Google Cloud commands. This builder is responsible to call commands to deploy my application;
+
+The YAML file `cloudbuild.yaml` is made of steps. I'll describe each one of the steps of this project.
+
+### Step 1: Pull an existing container image if it is already built
+
+This step will pull an existing image from the Google Container Registry. The `||`operator will execute `exit 0` if this pull fails, i.e., will not output any error message, so the building processes will not stop.
+
+```yaml
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        docker pull gcr.io/$PROJECT_ID/appcicd:latest || exit 0
+```
+
+The environment variable `PROJECT_ID` doesn't need to be set.
+
+### Step 2:  Build the new application image using the previous one
+
+If the the first step didn't find an existing image, this command will create a new one, but if it did, this step will use the existing image as a cache in this build.
+
+```yaml
+steps:
+  # <...>
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '.'
+```
+
+The name of my application image is `appcicd` and I set the version `latest` for both cache and build image because I want to update my `latest`application.
+
+NOTE: I got this commands in an article of the Cloud Build documentation. The article shows the best practices for speeding up builds [[5]]("#L5").
+
+### Step 3: Push the image to Google Cloud Registry
+
+Simply as the title of this subsection, the command will push the `latest` version of my application image to the GCR.
+
+```yaml
+steps:
+  # <...>
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+```
+
+### Step 4: Deploy the application in Google Cloud Run
+
+```yaml
+steps:
+  # <...>
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'appml'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+```
+
+The name of my application will be `appml`. This name will be displayed in the Google Cloud Run API where I'll get the URL to do the requests. The image used will be the one that I build in the previous steps. I choose the  `us-central1`as [region](https://cloud.google.com/about/locations) and used the Google Cloud Run `managed` platform to scale up or down to zero my application.
+
+**WARNING: In this project, for simplicity, I choose to `--allow-unauthenticated` requests. If you are just doing tests and serving the application for a few minutes, this option is not dangerous. Do not use this for production deployment.**
+
+Advanced mode: if you want to change other default settings as the allowed concurrent requests; maximum number of instances; memory limit; request timeout; manage traffic; and so on, please go to the `gcloud run deploy` [documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+
+NOTE: I got this commands in an article of the Cloud Run documentation. The article shows how to do a CI/CD to Cloud Run [[6]]("#L6").
 
 ## Google Cloud Run
+
+
 
 ## Cloud request
 
@@ -206,6 +299,14 @@ Google Cloud has its own repository, the Google Cloud Source Repositories. Howev
 
 ## References
 
-<a name="L1">[1]</a> Todd Birchard ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited in April 20, 2020)_
+<a name="L1">[1]</a> Todd Birchard, ["Building a Python App in Flask"](https://hackersandslackers.com/your-first-flask-application/). July, 2008. _(visited in April 20, 2020)_
 
-<a name="L2">[2]</a> Yury Pitsishin ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited in April 20, 2020)_
+<a name="L2">[2]</a> Yury Pitsishin, ["Docker RUN vs CMD vs ENTRYPOINT"](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/). April 2, 2016. _(visited in April 20, 2020)_
+
+<a name="L3">[3]</a> Google Cloud Build Documentation, ["Build configuration overview"](https://cloud.google.com/cloud-build/docs/build-config). _(visited in May 3, 2020)_
+
+<a Name="L4">[4]</a> Google Cloud Build Documentation, ["Cloud builders"](https://cloud.google.com/cloud-build/docs/cloud-builders). _(visited in May 3, 2020)_
+
+<a Name="L5">[5]</a> Google Cloud Build Documentation, ["Best practices for speeding up builds"](https://cloud.google.com/cloud-build/docs/speeding-up-builds). _(visited in May 3, 2020)_
+
+<a Name="L6">[6]</a> Google Cloud Run Documentation, ["Continuous deployment from git using Cloud Build"](https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build). _(visited in May 3, 2020)_

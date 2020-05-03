@@ -1,5 +1,5 @@
 steps:
-  # pull the container image if it's already built
+  # pull the container image if it is already built
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
@@ -33,5 +33,6 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+# push the builded images
 images:
   - 'gcr.io/$PROJECT_ID/appcicd:latest'
