@@ -25,7 +25,7 @@ The technologies used to make the model application was:
 
 - Python: `as language` 
 - scikit-learn: `dataset & model`
-- Pickle: `model object`
+- Pickle: `model object serialization`
 - Flask: `as web framework`
 - Docker: `for image/container creation`
 
@@ -59,13 +59,13 @@ ml-deployment-on-gcloud/
 
 ## Before you go through the article
 
-<EXPLAIN FOLDER `GCP_COMMANDS`...>
+
 
 ## Toy problem & the model entity
 
 In this tutorial, I used the scikit-learn [Boston data set](https://scikit-learn.org/stable/datasets/index.html#boston-house-prices-dataset) to create my ML model. It is a regression of a continuous target variable, namely, price. To make it even simpler, I trained a [Linear Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html) model that also belongs to the scikit-learn package, but I could choose any other model (XGBoost, LightGBM, ...).
 
-The folder named `train` contains a Python file, `boston_problem.py`, that loads the dataset, saves a JSON file (`example.json`) for test and saves the scikit-learn model object into a Pickle file (`ml-model.pkl`). Here is most important part of the code: 
+The folder named `train` contains a Python file, `boston_problem.py`, that loads the dataset, saves a JSON file (`example.json`) for test and saves the scikit-learn model object into a Pickle file (`ml-model.pkl`). Here is the most important part of the code: 
 
  ```python
 X.sample(1, random_state=0).iloc[0].to_json('example.json')
@@ -87,17 +87,17 @@ If you don't know anything about Flask, I recommend you to read the Todd Birchar
 
 The `app_files` folder contains two files: `ml-model.pkl`, the object that contains my exact created and trained model; and`app.py`, the application itself.
 
-In `app.py`, to read the `.pkl`, I just used Pickle package:
+In `app.py` I read the `.pkl` using the Pickle package:
 
 ```python
 with open('ml-model.pkl', 'rb') as f:
     MODEL = pickle.load(f)
 ```
 
-After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., _myapp.com_**/** and _myapp.com_**/predict** has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route. There are two main methods that can be simply described as follows:
+After that, I created a variable that I named `app` and it's a Flask object. This object has a [decorator](https://www.datacamp.com/community/tutorials/decorators-python) called `route` that exposes my functions to the web framework in a given URL pattern, e.g., _myapp.com:8080_**/** and _myapp.com:8080_**/predict** has `"/"` and `"/predict"` as routes, respectively. This decorator gives the option to choose the request method of this route. There are two main methods that can be simply described as follows:
 
 - GET: to retrieve an information (message);
-- POST: to receive an information and return a task result (another information/message);
+- POST: to receive an information and return the task result (another information/message);
 
 I created one function for each method. The first is a message to know that the application is alive:
 
@@ -127,18 +127,22 @@ Remember that I said that for almost every algorithm the column order is importa
         return jsonify(status='error', predict=-1)
 ```
 
-The last two command lines runs the application into the IP `0.0.0.0` (localhost) on the port `8080`, if the system has no environment variable named `PORT`. This environment variable is important to deploy on Google Cloud.
+The last two command lines of the `app.py` file runs the application into the IP `0.0.0.0` (localhost) and, if the system has no environment variable named `PORT`, in port `8080`. This environment variable `PORT` is important to deploy on Google Cloud.
 
 ```python
 if __name__=='__main__':
     app.run( debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)) )
 ```
 
-The conditional statement is because I just want to run my application if I am executing `app.py`. 
+The conditional statement `__name__=='__main__'` is because I just want to run my application if I am executing the file `app.py`. 
 
 ## Request tests
 
-In folder `request_test` I have two Python files to each request method that makes infinity loops. I used this programs to test my local and cloud Flask applications. To change between local and cloud application, we just have to change the URL address, e.g., http://localhost:8080/predict > http://myapp.com:8080/predict.
+In folder `request_test` I have two Python files to each request method that makes infinity loops. I used this programs to test my local and cloud Flask applications. To test the afore mentioned Flask application, all you have to do is run `app.py` with Python and run `loop_get.py` or `loop_post.py`.
+
+Below, I put an example of the output. As you will see the response time is around 3ms-4ms.
+
+![Local request](/home/jgui/Workspace/mainpy/20200412 - Model CICD on Google Cloud/ml-deployment-on-gcloud/screenshots/local_request.gif)
 
 ## Docker & Dockerfile
 
@@ -171,12 +175,12 @@ Until here, I had a complete containerized application working in my local host.
 
 ## Google Cloud Build - The trigger
 
-Google Cloud Build is a repository listener that can do almost everything you want after a `git push` command execution. It understands that some commit was made and trigger the execution of a script contained in a YAML file that belongs to the same repository. I'll talk about this file in the next section. For now, I'll show you how to configure this trigger.
+[Google Cloud Build](https://console.cloud.google.com/cloud-build/triggers) is a repository listener that can do almost everything you want after a `git push` command execution. It understands that some commit was made and trigger the execution of a script contained in a YAML file that belongs to the same repository. I'll talk about this file in the next section. For now, I'll show you how to configure this trigger.
 
 ### Step 1: Choose your repo
 
 
-Google Cloud has its own repository, the Google Cloud Source Repositories. However, in this project I choose GitHub, because I'm using a trial account. If you use the Google Cloud repo, go to step X.
+Google Cloud has its own repository, the Google Cloud Source Repositories. However, in this project I choose GitHub, because I'm using a trial account. If you use the Google Cloud repo, go to step 5.
 
 <img src="screenshots/gcloud-build-step1.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
 
@@ -214,13 +218,13 @@ Google Cloud Build gives you two options:
 The second option is more general. With this option I have lots of Cloud Builders [[4]]("#L4") to my disposal and I can run specific commands for my CI/CD purpose. This Cloud Builders are pre-built images to execute commands ([source codes](https://github.com/GoogleCloudPlatform/cloud-builders); [GCR list](https://console.cloud.google.com/gcr/images/cloud-builders/GLOBAL)).  However, for this project I just needed two of then:
 
 - `docker`to invoke Docker commands;
-- `gcloud` to invoke Google Cloud commands. This builder is responsible to call commands to deploy my application;
+- `gcloud` to invoke Google Cloud commands. This builder is responsible to call Google commands to deploy my application;
 
 The YAML file `cloudbuild.yaml` is made of steps. I'll describe each one of the steps of this project.
 
 ### Step 1: Pull an existing container image if it is already built
 
-This step will pull an existing image from the Google Container Registry. The `||`operator will execute `exit 0` if this pull fails, i.e., will not output any error message, so the building processes will not stop.
+This step will pull an existing image from the Google Container Registry. The `||`operator will execute `exit 0` if this pull command fails, i.e., it will not output any error message, so the building processes will not stop.
 
 ```yaml
 steps:
@@ -286,7 +290,7 @@ steps:
       - '--allow-unauthenticated'
 ```
 
-The name of my application will be `appml`. This name will be displayed in the Google Cloud Run API where I'll get the URL to do the requests. The image used will be the one that I build in the previous steps. I choose the  `us-central1`as [region](https://cloud.google.com/about/locations) and used the Google Cloud Run `managed` platform to scale up or down to zero my application.
+The name of my application will be `appml`. This name will be displayed in the [Google Cloud Run API](https://console.cloud.google.com/run) where I'll get the URL to do the requests. The image used here will be the one that I built in this previous steps. I choose the  `us-central1`as [region](https://cloud.google.com/about/locations) and used the Google Cloud Run `managed` platform to scale up or down to zero my application.
 
 **WARNING: In this project, for simplicity, I choose to `--allow-unauthenticated` requests. If you are just doing tests and serving the application for a few minutes, this option is not dangerous. Do not use this for production deployment.**
 
@@ -300,15 +304,15 @@ Now, I have the following elements:
 
 - A Machine Learning model trained in Python and serialized within a Pickle;
 - A Flask application that receives a JSON and runs my model predictions;
-- A Dockerfile that builds the operating system image that will execute my Flask application;
+- A Dockerfile that builds the operating system image that will host my Flask application;
 - A YAML file that have steps to build my Docker image and deploy it to the Google Cloud Run API;
 - A trigger in the Google Cloud Build that listen my GitHub repository for changes and execute the YAML file configuration;
 
-If I made a `git push` to my repository, in some seconds I'll see a new building process in the Google Cloud Build History tab as in the figure below:
+If I made a `git push` to my repository, in some seconds I'll see a new building process in the Google Cloud Build [History tab](https://console.cloud.google.com/cloud-build/builds) as in the figure below:
 
 <img src="screenshots/gcloud-build-step8.png" alt="Building process" style="zoom:67%;" />
 
-As you can see, it ran all of my 4 steps with success and I can see the build log in the right side of the page.
+As you can see, it ran all of my YAML 4 steps with success and the build log is in the right side of the page.
 
 After that, the Google Cloud Run will list my `appcicd` application and if I click on it I'll see some information about it. The main information here is the URL of my application, that's the address to make requests.
 
@@ -318,9 +322,15 @@ Now that the application is running, it's prepared to receive requests.
 
 ## Cloud request test
 
+To test my application I used the same program describe in section "Request tests", but I choose a non-local application. Below, I put an example of the cloud request output. As you will see the response time is around 230ms-260ms, almost 60x-80x slower that my local application. The reason behind this slower behavior is because the host machine of my application is in Iowa (USA) and I'm living in São Paulo (Brazil), more than 8,700 km in a straight line.
 
+![Cloud request](/home/jgui/Workspace/mainpy/20200412 - Model CICD on Google Cloud/ml-deployment-on-gcloud/screenshots/cloud_request.gif)
 
 ## Conclusion
+
+As I said, this is a simple example on how to deploy your Machine Learning algorithm. Lots of names and technologies was said, but in the end, if you know Python, you just change names in some files and do some point and clicks to put your model into production.
+
+The only point that was not addressed in this article was the request authentication to the Google Cloud Run service created. To do that please go to [Secure](https://cloud.google.com/run/docs/securing/managing-access) and [Authenticate](https://cloud.google.com/run/docs/authenticating/overview) sections in the Google Cloud Run documentation.
 
 ## References
 
