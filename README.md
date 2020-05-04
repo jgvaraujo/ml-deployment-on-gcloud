@@ -57,6 +57,10 @@ ml-deployment-on-gcloud/
 5 directories, 23 files
 ```
 
+## Before you go through the article
+
+<EXPLAIN FOLDER `GCP_COMMANDS`...>
+
 ## Toy problem & the model entity
 
 In this tutorial, I used the scikit-learn [Boston data set](https://scikit-learn.org/stable/datasets/index.html#boston-house-prices-dataset) to create my ML model. It is a regression of a continuous target variable, namely, price. To make it even simpler, I trained a [Linear Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html) model that also belongs to the scikit-learn package, but I could choose any other model (XGBoost, LightGBM, ...).
@@ -205,7 +209,7 @@ Google Cloud Build gives you two options:
 - Build a Docker image with a Dockerfile;
 - Use a [YAML](https://en.wikipedia.org/wiki/YAML) file to run commands from Google Container Registry images that builds your application;
 
-The second option is more general. With this option I have lots of Cloud Builders [[4]]("#L4") to my disposal and I can run specific commands for my CI/CD purpose. This Cloud Builders are pre-built images ([source codes](https://github.com/GoogleCloudPlatform/cloud-builders)) to execute commands.   However, for this project I just needed two of then:
+The second option is more general. With this option I have lots of Cloud Builders [[4]]("#L4") to my disposal and I can run specific commands for my CI/CD purpose. This Cloud Builders are pre-built images to execute commands ([source codes](https://github.com/GoogleCloudPlatform/cloud-builders); [GCR list](https://console.cloud.google.com/gcr/images/cloud-builders/GLOBAL)).  However, for this project I just needed two of then:
 
 - `docker`to invoke Docker commands;
 - `gcloud` to invoke Google Cloud commands. This builder is responsible to call commands to deploy my application;
