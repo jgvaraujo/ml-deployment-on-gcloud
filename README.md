@@ -136,7 +136,7 @@ if __name__=='__main__':
 
 The conditional statement is because I just want to run my application if I am executing `app.py`. 
 
-## Request Tests
+## Request tests
 
 In folder `request_test` I have two Python files to each request method that makes infinity loops. I used this programs to test my local and cloud Flask applications. To change between local and cloud application, we just have to change the URL address, e.g., http://localhost:8080/predict > http://myapp.com:8080/predict.
 
@@ -182,27 +182,29 @@ Google Cloud has its own repository, the Google Cloud Source Repositories. Howev
 
 ### Step 2: Install Google Cloud Build app in you GitHub account
 
-<img src="screenshots/gcloud-build-step2.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step2.png" alt="Install Google Cloud Build app" style="zoom:67%;" />
 
-<img src="screenshots/gcloud-build-step3.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step3.png" alt="Install Google Cloud Build app to my repo" style="zoom:67%;" />
 
 ### Step 3: Select the repositories you want to listen
 
-<img src="screenshots/gcloud-build-step4.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step4.png" alt="Connection to my repository" style="zoom:67%;" />
 
 ### Step 4: Create the Push Trigger
 
-![Possible repositories in Google Cloud Build](screenshots/gcloud-build-step5.png)
+<img src="screenshots/gcloud-build-step5.png" alt="Creating a push trigger" style="zoom:80%;" />
 
 ### Step 5: Edit the trigger to change the name, choose trigger branches and select the build configuration file (`cloudbuild.yaml`) ###################
 
-<img src="screenshots/gcloud-build-step6.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step6.png" alt="Editing trigger" style="zoom:67%;" />
 
-<img src="screenshots/gcloud-build-step7a.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step7a.png" alt="Rename and trigger source" style="zoom:67%;" />
 
-<img src="screenshots/gcloud-build-step7b.png" alt="Possible repositories in Google Cloud Build" style="zoom:67%;" />
+<img src="screenshots/gcloud-build-step7b.png" alt="Build configuration file" style="zoom:67%;" />
 
-## YAML Ain't a Markup Language - `cloudbuild.yaml`
+Now, with the trigger configured, all I have to do is execute a `git push`to my repository. The Google Cloud Build will read my `cloudbuild.yaml`and execute its steps.
+
+## YAML Ain't a Markup Language - The `cloudbuild.yaml`
 
 Google Cloud Build gives you two options:
 
@@ -226,8 +228,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - |-
-        docker pull gcr.io/$PROJECT_ID/appcicd:latest || exit 0
+      - 'docker pull gcr.io/$PROJECT_ID/appcicd:latest || exit 0'
 ```
 
 The environment variable `PROJECT_ID` doesn't need to be set.
@@ -295,9 +296,29 @@ NOTE: I got this commands in an article of the Cloud Run documentation. The arti
 
 ## Google Cloud Run
 
+Now, I have the following elements:
+
+- A Machine Learning model trained in Python and serialized within a Pickle;
+- A Flask application that receives a JSON and runs my model predictions;
+- A Dockerfile that builds the operating system image that will execute my Flask application;
+- A YAML file that have steps to build my Docker image and deploy it to the Google Cloud Run API;
+- A trigger in the Google Cloud Build that listen my GitHub repository for changes and execute the YAML file configuration;
+
+If I made a `git push` to my repository, in some seconds I'll see a new building process in the Google Cloud Build History tab as in the figure below:
+
+<img src="screenshots/gcloud-build-step8.png" alt="Building process" style="zoom:67%;" />
+
+As you can see, it ran all of my 4 steps with success and I can see the build log in the right side of the page.
+
+After that, the Google Cloud Run will list my `appcicd` application and if I click on it I'll see some information about it. The main information here is the URL of my application, that's the address to make requests.
+
+<img src="screenshots/gcloud-build-step9.png" alt="Application address" style="zoom:67%;" />
+
+Now that the application is running, it's prepared to receive requests.
+
+## Cloud request test
 
 
-## Cloud request
 
 ## Conclusion
 
