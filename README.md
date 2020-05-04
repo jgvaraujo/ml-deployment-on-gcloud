@@ -144,7 +144,7 @@ In folder `request_test` I have two Python files to each request method that mak
 
 Below, I put an example of the output. As you will see the response time is around 3ms-4ms.
 
-![Local request](/home/jgui/Workspace/mainpy/20200412 - Model CICD on Google Cloud/ml-deployment-on-gcloud/screenshots/local_request.gif)
+![Local request](screenshots/local_request.gif)
 
 ## Docker & Dockerfile
 
@@ -326,7 +326,7 @@ Now that the application is running, it's prepared to receive requests.
 
 To test my application I used the same program describe in section "Request tests", but I choose a non-local application. Below, I put an example of the cloud request output. As you will see the response time is around 230ms-260ms, almost 60x-80x slower that my local application. The reason behind this slower behavior is because the host machine of my application is in Iowa (USA) and I'm living in São Paulo (Brazil), more than 8,700 km in a straight line.
 
-![Cloud request](/home/jgui/Workspace/mainpy/20200412 - Model CICD on Google Cloud/ml-deployment-on-gcloud/screenshots/cloud_request.gif)
+![Cloud request](screenshots/cloud_request.gif)
 
 ## Conclusion
 
