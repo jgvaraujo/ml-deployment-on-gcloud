@@ -59,7 +59,9 @@ ml-deployment-on-gcloud/
 
 ## Before you go through the article
 
+Please, activate Google Container Registry, Cloud Build and Cloud Run APIs.
 
+In folder `gcp_commands` have two shell script files. One to install Google Cloud SDK into Ubuntu, `install_gcloud_sdk.sh`, and the other to initialize the `gcloud` and configure the necessary IAM policies to the CI/CD pipeline, `gcloud_config.sh`. I recommend you to read and run this two scripts before you go through the article.
 
 ## Toy problem & the model entity
 
