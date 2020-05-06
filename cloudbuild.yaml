@@ -20,7 +20,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
+      - 'gcr.io/$PROJECT_ID/appcicd'
   # deploy container image to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
