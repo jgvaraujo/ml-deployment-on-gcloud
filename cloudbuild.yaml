@@ -11,14 +11,16 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
       - '--cache-from'
       - 'gcr.io/$PROJECT_ID/appcicd:latest'
       - '.'
   # push the container image to Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   args:
+  #     - 'push'
+  #     - 'gcr.io/$PROJECT_ID/appcicd:latest'
   # deploy container image to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
@@ -26,12 +28,13 @@ steps:
       - 'deploy'
       - 'appml'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
       - '--region'
       - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-# push the builded images
+# push the builded images with tags
 images:
   - 'gcr.io/$PROJECT_ID/appcicd:latest'
+  - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
