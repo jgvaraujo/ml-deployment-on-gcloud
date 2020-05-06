@@ -16,7 +16,7 @@ steps:
       - '--cache-from'
       - 'gcr.io/$PROJECT_ID/appcicd:latest'
       - '.'
-  # push the container image to Container Registry
+  # push the container image to Container Registry with all tags
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
@@ -34,7 +34,3 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-# push the builded images with tags
-# images:
-#   - 'gcr.io/$PROJECT_ID/appcicd:latest'
-#   - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
