@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def server_check():
-    return "THE SERVER IS UP!"
+    return "I'M ALIVE!"
 
 @app.route('/predict', methods=['POST'])
 def predictor():
