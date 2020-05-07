@@ -152,8 +152,6 @@ Docker is an excellent container image manager and did the system isolation work
 
 - If your application don't need a whole operating system, you can get small base image to you application. Instead of `ubuntu:18.04` you can choose `python:3.6`; instead of `python:3.6` you can choose `python:3.6-slim-buster`; and so on.
 - A container image is built of layers. Every command is a layer. If something change in the command (the content of a file, the command itself, ...) the layer changes. The tip here is to use cache images, i.e., to use a pre-built image and it's layers in the process of building a new image. For this, put the commands and layers more prone to change in the end of the file. The classical layer to put in the first lines is the one to install dependencies. This dependencies are explicitly declared in `requirements.txt`.
-- Use `gunicorn`as your production server. It's just a line of code that has three important arguments:
-  - `--bind`: 
 
 This is my Dockerfile:
 
@@ -168,7 +166,7 @@ RUN pip install -r requirements.txt
 COPY . /app
 WORKDIR /app/app_files
 # starts my application
-CMD ["gunicorn", "--bind", ":${PORT}", "--workers", "5", "app:app"]
+CMD ["python", "app.py"]
 ```
 
 NOTE: I lost sometime to understand the difference between commands RUN, CMD and ENTRYPOINT. If you wanna know this too, I recommend you to read Yury Pitsishin's article [[2]](#L2).
