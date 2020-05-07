@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 WORKDIR /app/app_files
 
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", ":8080", "--workers", "5", "app:app"]
