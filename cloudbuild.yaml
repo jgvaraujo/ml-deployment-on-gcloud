@@ -28,7 +28,7 @@ steps:
       - 'deploy'
       - 'appml'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
+      - 'gcr.io/$PROJECT_ID/appcicd:latest'
       - '--region'
       - 'us-central1'
       - '--platform'

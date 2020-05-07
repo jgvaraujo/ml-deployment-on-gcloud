@@ -148,10 +148,12 @@ Below, I put an example of the output. As you will see the response time is arou
 
 ## Docker & Dockerfile
 
-Docker is an excellent container image manager and did the system isolation work for me. I just made a simple Dockerfile, but I have two tips for you:
+Docker is an excellent container image manager and did the system isolation work for me. I just made a simple Dockerfile, but I have three tips for you:
 
 - If your application don't need a whole operating system, you can get small base image to you application. Instead of `ubuntu:18.04` you can choose `python:3.6`; instead of `python:3.6` you can choose `python:3.6-slim-buster`; and so on.
-- A container image is built of layers. Every command is a layer. If something change in the command (the content of a file, the command itself, ...) the layer changes. The tip here is to use cache images, i.e., to use a pre-built image and it's layers in the process of building a new image. For this, put the commands and layers more prone to change in the end of the file. The classical layer to put in the first lines is the one to install dependencies.
+- A container image is built of layers. Every command is a layer. If something change in the command (the content of a file, the command itself, ...) the layer changes. The tip here is to use cache images, i.e., to use a pre-built image and it's layers in the process of building a new image. For this, put the commands and layers more prone to change in the end of the file. The classical layer to put in the first lines is the one to install dependencies. This dependencies are explicitly declared in `requirements.txt`.
+- Use `gunicorn`as your production server. It's just a line of code that has three important arguments:
+  - `--bind`: 
 
 This is my Dockerfile:
 
@@ -166,7 +168,7 @@ RUN pip install -r requirements.txt
 COPY . /app
 WORKDIR /app/app_files
 # starts my application
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", ":${PORT}", "--workers", "5", "app:app"]
 ```
 
 NOTE: I lost sometime to understand the difference between commands RUN, CMD and ENTRYPOINT. If you wanna know this too, I recommend you to read Yury Pitsishin's article [[2]](#L2).
@@ -251,18 +253,20 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/appcicd:$COMMIT_SHA'
       - '--cache-from'
       - 'gcr.io/$PROJECT_ID/appcicd:latest'
       - '.'
 ```
 
-The name of my application image is `appcicd` and I set the version `latest` for both cache and build image because I want to update my `latest`application.
+The name of my application image is `appcicd` and I set the tag `latest` for both cache and build image because I want to update my `latest`application. Also, I add a tag with the commit hash code, COMMIT_SHA, to possible rollback actions.
 
 NOTE: I got this commands in an article of the Cloud Build documentation. The article shows the best practices for speeding up builds [[5]]("#L5").
 
 ### Step 3: Push the image to Google Cloud Registry
 
-Simply as the title of this subsection, the command will push the `latest` version of my application image to the GCR.
+Simply as the title of this subsection, the command will push the new image of my application image to the GCR with both tags, `latest` and `$COMMIT_SHA`.
 
 ```yaml
 steps:
@@ -270,7 +274,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'gcr.io/$PROJECT_ID/appcicd:latest'
+      - 'gcr.io/$PROJECT_ID/appcicd'
 ```
 
 ### Step 4: Deploy the application in Google Cloud Run
