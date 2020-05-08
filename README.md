@@ -148,7 +148,7 @@ Below, I put an example of the output. As you will see the response time is arou
 
 ## Docker & Dockerfile
 
-Docker is an excellent container image manager and did the system isolation work for me. I just made a simple Dockerfile, but I have three tips for you:
+Docker is an excellent container image manager and did the system isolation work for me. I just made a simple Dockerfile, but I have two tips for you:
 
 - If your application don't need a whole operating system, you can get small base image to you application. Instead of `ubuntu:18.04` you can choose `python:3.6`; instead of `python:3.6` you can choose `python:3.6-slim-buster`; and so on.
 - A container image is built of layers. Every command is a layer. If something change in the command (the content of a file, the command itself, ...) the layer changes. The tip here is to use cache images, i.e., to use a pre-built image and it's layers in the process of building a new image. For this, put the commands and layers more prone to change in the end of the file. The classical layer to put in the first lines is the one to install dependencies. This dependencies are explicitly declared in `requirements.txt`.
